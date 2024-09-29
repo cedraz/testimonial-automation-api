@@ -12,6 +12,7 @@ import { ErrorMessagesHelper } from 'src/helpers/error-messages.helper';
 import { CompleteTestimonialDto } from './dto/complete-testimonial.dto';
 import { GPTMock } from 'src/services/open-ai';
 import { LandingPageService } from 'src/landing-page/landing-page.service';
+import { OpenAIService } from 'src/services/open-ai/open-ai.service';
 
 @Injectable()
 export class TestimonialService {
@@ -20,6 +21,7 @@ export class TestimonialService {
     private stripeService: StripeService,
     private prismaService: PrismaService,
     private landingPageService: LandingPageService,
+    private openAIService: OpenAIService,
   ) {}
 
   async createTestimonialLink(createTestimonialDto: CreateTestimonialDto) {
@@ -157,5 +159,11 @@ export class TestimonialService {
         },
       },
     });
+  }
+
+  async testeAI() {
+    const aaa = await this.openAIService.teste('Qual o nome dos 7 anoes?');
+
+    return aaa;
   }
 }

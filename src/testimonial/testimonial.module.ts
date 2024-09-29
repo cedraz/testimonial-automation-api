@@ -5,6 +5,7 @@ import { StripeModule } from 'src/stripe/stripe.module';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { LandingPageService } from 'src/landing-page/landing-page.service';
 import { TestimonialConfigService } from 'src/testimonial-config/testimonial-config.service';
+import { OpenAIService } from 'src/services/open-ai/open-ai.service';
 
 @Module({
   controllers: [TestimonialController],
@@ -13,6 +14,7 @@ import { TestimonialConfigService } from 'src/testimonial-config/testimonial-con
     PrismaService,
     LandingPageService,
     TestimonialConfigService,
+    OpenAIService,
   ],
   imports: [StripeModule],
 })
