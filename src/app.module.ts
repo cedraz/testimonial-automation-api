@@ -14,6 +14,8 @@ import { ApiKeyModule } from './api-key/api-key.module';
 import { LandingPageModule } from './landing-page/landing-page.module';
 import { TestimonialConfigModule } from './testimonial-config/testimonial-config.module';
 import { TestimonialModule } from './testimonial/testimonial.module';
+import { DomainGuard } from './auth/guards/domain.guard';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -41,6 +43,7 @@ import { TestimonialModule } from './testimonial/testimonial.module';
     TestimonialModule,
   ],
   controllers: [AppController],
-  providers: [PrismaService],
+  providers: [PrismaService, DomainGuard, JwtAuthGuard],
+  exports: [DomainGuard, JwtAuthGuard],
 })
 export class AppModule {}

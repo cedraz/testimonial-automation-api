@@ -3,6 +3,9 @@ import { CreateTestimonialConfigDto } from './dto/create-testimonial-config.dto'
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import { ErrorMessagesHelper } from 'src/helpers/error-messages.helper';
+import { TestimonialConfigPaginationDto } from './dto/testimonial-config-pagination.dto';
+import { PaginationResultDto } from 'src/common/entities/pagination-result.entity';
+import { TestimonialConfig } from './entities/testimonial-config.entity';
 
 @Injectable()
 export class TestimonialConfigService {
@@ -38,12 +41,30 @@ export class TestimonialConfigService {
     });
   }
 
-  findAll(admin_id: string) {
-    return this.prismaService.testimonialConfig.findMany({
+  async findAll(
+    pagination: TestimonialConfigPaginationDto,
+    admin_id: string,
+  ): Promise<PaginationResultDto<TestimonialConfig>> {
+    const results = await this.prismaService.testimonialConfig.findMany({
       where: {
+        AND: pagination.where(),
         admin_id,
       },
     });
+
+    const total = await this.prismaService.testimonialConfig.count({
+      where: {
+        admin_id,
+        AND: pagination.where(),
+      },
+    });
+
+    return {
+      results,
+      total,
+      limit: pagination.limit,
+      init: pagination.init,
+    };
   }
 
   count(admin_id: string) {

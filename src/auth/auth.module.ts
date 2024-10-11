@@ -12,6 +12,11 @@ import { JobsModule } from 'src/jobs/jobs.module';
 import { AdminService } from 'src/admin/admin.service';
 import { AdminModule } from 'src/admin/admin.module';
 import { StripeModule } from 'src/stripe/stripe.module';
+import { DomainGuard } from './guards/domain.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { AdminGuard } from './guards/admin.guard';
+import { ApiKeyGuard } from './guards/api-key.guard';
+import { ApiKeyService } from 'src/api-key/api-key.service';
 
 @Module({
   controllers: [AuthController],
@@ -22,6 +27,11 @@ import { StripeModule } from 'src/stripe/stripe.module';
     AdminService,
     PrismaService,
     JwtStrategy,
+    DomainGuard,
+    JwtAuthGuard,
+    AdminGuard,
+    ApiKeyGuard,
+    ApiKeyService,
   ],
   imports: [
     PassportModule,
@@ -32,5 +42,6 @@ import { StripeModule } from 'src/stripe/stripe.module';
     AdminModule,
     JobsModule,
   ],
+  exports: [DomainGuard, JwtAuthGuard, AdminGuard, ApiKeyGuard],
 })
 export class AuthModule {}

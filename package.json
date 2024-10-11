@@ -21,6 +21,7 @@
     "seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.20.0",
     "@nestjs/bull": "^10.2.0",
     "@nestjs/bullmq": "^10.2.0",
     "@nestjs/common": "^10.0.0",

@@ -9,4 +9,8 @@ export class AdminPaginationDto extends PaginationQueryDto {
   @IsOptional()
   @Type(() => Boolean)
   orderByCreatedAt: boolean;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  name?: string;
 }

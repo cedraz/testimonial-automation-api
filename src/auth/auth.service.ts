@@ -134,7 +134,6 @@ export class AuthService {
     const { password_hash, ...adminWithoutPassword } = admin;
 
     return {
-      adminWithoutPassword,
       access_token: await this.jwtService.signAsync(accessTokenPayload, {
         expiresIn: '2h',
         secret: this.configService.get('ACCESS_TOKEN_SECRET'),

@@ -13,7 +13,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { PasswordRecoveryAuthGuard } from 'src/auth/guards/password-recovery.guard';
 import { UpdateAdminDto } from './dto/update-admin.dto';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { AdminGuard } from 'src/auth/guards/admin.guard';
 
 @Controller('admin')
 @ApiTags('admin')
@@ -33,7 +33,7 @@ export class AdminController {
   //   summary: 'Ger all admins',
   // })
   // @ApiBearerAuth()
-  // @UseGuards(JwtAuthGuard)
+  // @UseGuards(AdminGuard)
   // @UsePipes(new ValidationPipe({ transform: true }))
   // findAll(@Query() pagination: AdminPaginationDto) {
   //   return this.adminService.findAll(pagination);
@@ -44,7 +44,7 @@ export class AdminController {
   //   summary: 'Search for an admin by ID',
   // })
   // @ApiBearerAuth()
-  // @UseGuards(JwtAuthGuard)
+  // @UseGuards(AdminGuard)
   // findById(@Param('id') id: string) {
   //   return this.adminService.findById(id);
   // }
@@ -66,7 +66,7 @@ export class AdminController {
   @ApiOperation({
     summary: 'Get logged admin profile',
   })
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AdminGuard)
   @ApiBearerAuth()
   getProfile(@Request() req) {
     return this.adminService.findById(req.user.id);
@@ -76,7 +76,7 @@ export class AdminController {
   @ApiOperation({
     summary: 'Delete logged admin profile',
   })
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AdminGuard)
   @ApiBearerAuth()
   deleteProfile(@Request() req) {
     return this.adminService.delete(req.user.id);
@@ -87,7 +87,7 @@ export class AdminController {
     summary: 'Update logged admin profile',
   })
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AdminGuard)
   updateProfile(@Body() updateAdminDto: UpdateAdminDto, @Request() req) {
     return this.adminService.updateProfile(req.user.id, updateAdminDto);
   }

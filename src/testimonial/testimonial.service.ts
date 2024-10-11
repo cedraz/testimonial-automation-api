@@ -10,9 +10,11 @@ import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ErrorMessagesHelper } from 'src/helpers/error-messages.helper';
 import { CompleteTestimonialDto } from './dto/complete-testimonial.dto';
-import { GPTMock } from 'src/services/open-ai';
 import { LandingPageService } from 'src/landing-page/landing-page.service';
-import { OpenAIService } from 'src/services/open-ai/open-ai.service';
+import { TestimonialPaginationDto } from './dto/testimonial.pagination.dto';
+import { PaginationResultDto } from 'src/common/entities/pagination-result.entity';
+import { Testimonial } from './entities/testimonial.entity';
+import { GoogleGeminiService } from 'src/services/google-gemini/google-gemini.service';
 
 @Injectable()
 export class TestimonialService {
@@ -21,7 +23,7 @@ export class TestimonialService {
     private stripeService: StripeService,
     private prismaService: PrismaService,
     private landingPageService: LandingPageService,
-    private openAIService: OpenAIService,
+    private googleGeminiService: GoogleGeminiService,
   ) {}
 
   async createTestimonialLink(createTestimonialDto: CreateTestimonialDto) {
@@ -64,10 +66,9 @@ export class TestimonialService {
     if (!testimonial)
       throw new NotFoundException(ErrorMessagesHelper.TESTIMONIAL_NOT_FOUND);
 
-    const { testimonial_config } =
-      await this.landingPageService.getLandingPageConfigService(
-        testimonial.landing_page_id,
-      );
+    const { testimonial_config } = await this.landingPageService.findById(
+      testimonial.landing_page_id,
+    );
 
     if (!testimonial_config)
       throw new NotFoundException(
@@ -115,13 +116,10 @@ export class TestimonialService {
     let status: 'APPROVED' | 'REJECTED' = 'APPROVED';
 
     if (adminPlan.plan === 'PREMIUM') {
-      const gptMock = await GPTMock({
-        prompt: completeTestimonialDto.message,
-      });
+      const isPositiveFeedback =
+        await this.googleGeminiService.evaluateTestimonial(testimonial.message);
 
-      if (gptMock.data.choices[0].text.includes('bad')) {
-        status = 'REJECTED';
-      }
+      status = isPositiveFeedback ? 'APPROVED' : 'REJECTED';
     }
 
     return this.prismaService.testimonial.update({
@@ -161,9 +159,61 @@ export class TestimonialService {
     });
   }
 
-  async testeAI() {
-    const aaa = await this.openAIService.teste('Qual o nome dos 7 anoes?');
+  async findAll(
+    pagination: TestimonialPaginationDto,
+    admin_id: string,
+  ): Promise<PaginationResultDto<Testimonial>> {
+    const results: Testimonial[] =
+      await this.prismaService.testimonial.findMany({
+        where: {
+          landing_page: {
+            admin_id,
+          },
+          AND: pagination.where(),
+        },
+      });
 
-    return aaa;
+    const total = await this.prismaService.testimonial.count({
+      where: {
+        landing_page: {
+          admin_id,
+        },
+        AND: pagination.where(),
+      },
+    });
+
+    return {
+      results,
+      total,
+      limit: pagination.limit,
+      init: pagination.init,
+    };
+  }
+
+  async findByLandingPageId(
+    landing_page_id: string,
+    pagination: TestimonialPaginationDto,
+  ) {
+    const results: Testimonial[] =
+      await this.prismaService.testimonial.findMany({
+        where: {
+          landing_page_id,
+          AND: pagination.where(),
+        },
+      });
+
+    const total = await this.prismaService.testimonial.count({
+      where: {
+        landing_page_id,
+        AND: pagination.where(),
+      },
+    });
+
+    return {
+      results,
+      total,
+      limit: pagination.limit,
+      init: pagination.init,
+    };
   }
 }

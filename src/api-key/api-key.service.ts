@@ -39,6 +39,14 @@ export class ApiKeyService {
     });
   }
 
+  findByKey(key: string) {
+    return this.prismaService.apiKey.findUnique({
+      where: {
+        key,
+      },
+    });
+  }
+
   findByAdminId(admin_id: string) {
     return this.prismaService.apiKey.findUnique({
       where: {

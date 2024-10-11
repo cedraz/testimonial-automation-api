@@ -1,10 +1,12 @@
 import { Body, ConflictException, Controller, Post } from '@nestjs/common';
 import { VerificationRequestService } from './verification-request.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { CreateVerificationRequestDto } from './dto/create-verification-request.dto';
 import { ValidateVerificationRequestDto } from './dto/validate-verification-request.dto';
 import { ErrorMessagesHelper } from 'src/helpers/error-messages.helper';
+import { ValidateRequestEntity } from './entity/validate-request.entity';
+import { VerificationRequest } from './entity/verification-request.entity';
 
 @Controller('verification-request')
 @ApiTags('verification-request')
@@ -16,7 +18,10 @@ export class VerificationRequestController {
   @ApiOperation({
     summary: 'Create a verification request',
   })
-  @Post('create-verification-request')
+  @Post('create')
+  @ApiOkResponse({
+    type: VerificationRequest,
+  })
   createVerificationRequest(
     @Body() createVerificationRequestDto: CreateVerificationRequestDto,
   ) {
@@ -32,7 +37,10 @@ export class VerificationRequestController {
   @ApiOperation({
     summary: 'Validate a verification request',
   })
-  @Post('validate-verification-request')
+  @ApiOkResponse({
+    type: ValidateRequestEntity,
+  })
+  @Post('validate')
   validateVerificationRequest(
     @Body() validateVerificationRequestDto: ValidateVerificationRequestDto,
   ) {

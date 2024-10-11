@@ -84,6 +84,12 @@ class EnvironmentVariables {
 
   @IsString()
   STRIPE_WEBHOOK_SECRET: string;
+
+  @IsString()
+  ALLOWED_DOMAIN: string;
+
+  @IsString()
+  GOOGLE_API_KEY: string;
 }
 
 export function validate(config: Record<string, unknown>) {

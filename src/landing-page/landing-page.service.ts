@@ -9,6 +9,9 @@ import { ConfigService } from '@nestjs/config';
 import { ErrorMessagesHelper } from 'src/helpers/error-messages.helper';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { StripeService } from 'src/stripe/stripe.service';
+import { PaginationResultDto } from 'src/common/entities/pagination-result.entity';
+import { LandingPage } from './entities/landing-page.entity';
+import { LandingPagePaginationDto } from './dto/landing-page.pagination.dto';
 
 @Injectable()
 export class LandingPageService {
@@ -97,14 +100,30 @@ export class LandingPageService {
     });
   }
 
-  getLandingPageConfigService(landing_page_id: string) {
-    return this.prismaService.landingPage.findUnique({
+  async findAdminLandingPages(
+    pagination: LandingPagePaginationDto,
+    admin_id: string,
+  ): Promise<PaginationResultDto<LandingPage>> {
+    const results: LandingPage[] =
+      await this.prismaService.landingPage.findMany({
+        where: {
+          AND: pagination.where(),
+          admin_id,
+        },
+      });
+
+    const total = await this.prismaService.landingPage.count({
       where: {
-        id: landing_page_id,
-      },
-      select: {
-        testimonial_config: true,
+        AND: pagination.where(),
+        admin_id,
       },
     });
+
+    return {
+      results,
+      total,
+      limit: pagination.limit,
+      init: pagination.init,
+    };
   }
 }

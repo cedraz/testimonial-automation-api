@@ -8,10 +8,16 @@ import {
   Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOkResponse,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { GoogleOAuthGuard } from './guards/google.guard';
 import { Request as ExpressRequest, Response } from 'express';
 import { LoginDto } from './dto/login.dto';
+import { TokenEntity } from './entities/token.entity';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -59,6 +65,9 @@ export class AuthController {
     summary: 'login',
   })
   @Post('login')
+  @ApiOkResponse({
+    type: TokenEntity,
+  })
   adminLogin(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
   }
@@ -66,6 +75,9 @@ export class AuthController {
   @Get('refresh')
   @ApiOperation({
     summary: 'Refresh token',
+  })
+  @ApiOkResponse({
+    type: TokenEntity,
   })
   adminRefresh(@Request() req: ExpressRequest) {
     return this.authService.refreshAccessToken(req.cookies['refresh_token']);

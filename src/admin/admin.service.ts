@@ -133,12 +133,12 @@ export class AdminService {
   ): Promise<PaginationResultDto<Admin>> {
     const AND: Prisma.AdminWhereInput[] = [];
 
-    if (adminPaginationDto.q) {
+    if (adminPaginationDto.name) {
       AND.push({
         OR: [
           {
             name: {
-              contains: adminPaginationDto.q,
+              contains: adminPaginationDto.name,
               mode: 'insensitive',
             },
           },
