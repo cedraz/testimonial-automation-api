@@ -1,5 +1,4 @@
 export async function GPTMock(data: any) {
-  console.log('GPTMock', data);
   return {
     data: {
       choices: [

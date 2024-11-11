@@ -15,13 +15,13 @@ export class AdminGuard implements CanActivate {
     const domainCheck = this.domainGuard.canActivate(context);
 
     if (domainCheck) {
-      const jwtCheck = this.jwtAuthGuard.canActivate(context);
+      const jwtCheck = await this.jwtAuthGuard.canActivate(context);
 
       if (jwtCheck instanceof Observable) {
         return await firstValueFrom(jwtCheck);
       }
 
-      return await jwtCheck;
+      return jwtCheck;
     }
 
     return false;

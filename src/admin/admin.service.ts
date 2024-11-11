@@ -154,8 +154,8 @@ export class AdminService {
         },
         { name: 'asc' },
       ],
-      skip: adminPaginationDto.init,
-      take: adminPaginationDto.limit,
+      skip: 6,
+      take: 6,
       select: {
         id: true,
         email: true,
@@ -166,8 +166,8 @@ export class AdminService {
     });
 
     return {
-      init: adminPaginationDto.init,
-      limit: adminPaginationDto.limit,
+      init: 6,
+      limit: 6,
       total: admins.length,
       results: admins,
     };

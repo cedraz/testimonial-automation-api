@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { TestimonialFormat } from '@prisma/client';
-import { IsEnum, IsInt, IsUUID } from 'class-validator';
+import { IsEnum, IsInt } from 'class-validator';
 
 export class CreateTestimonialConfigDto {
   @ApiProperty({
@@ -20,7 +20,4 @@ export class CreateTestimonialConfigDto {
   })
   @IsInt()
   expiration_limit: number;
-
-  @IsUUID()
-  admin_id: string;
 }

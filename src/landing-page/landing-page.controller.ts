@@ -26,8 +26,8 @@ export class LandingPageController {
   })
   @ApiBearerAuth()
   @UseGuards(AdminGuard)
-  create(@Body() createLandingPageDto: CreateLandingPageDto) {
-    return this.landingPageService.create(createLandingPageDto);
+  create(@Body() createLandingPageDto: CreateLandingPageDto, @Request() req) {
+    return this.landingPageService.create(createLandingPageDto, req.user.id);
   }
 
   @Get(':landing_page_id')

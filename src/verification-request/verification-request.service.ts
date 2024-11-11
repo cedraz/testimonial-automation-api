@@ -149,7 +149,6 @@ export class VerificationRequestService {
     const stripeCustomer = await this.stripeService.createCustomer({
       email: admin.email,
       name: admin.name,
-      admin_id: admin.id,
     });
 
     await this.prismaService.admin.update({

@@ -92,7 +92,7 @@ model LandingPage {
   testimonial_config_id String
   admin_id              String
   admin                 Admin             @relation(fields: [admin_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  testimonial_config    TestimonialConfig @relation(fields: [testimonial_config_id], references: [id])
+  testimonial_config    TestimonialConfig @relation(fields: [testimonial_config_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   testimonials          Testimonial[]
 
   @@map("landing_pages")
@@ -114,7 +114,7 @@ model TestimonialConfig {
   updated_at DateTime @updatedAt
 
   landing_page LandingPage[]
-  admin        Admin         @relation(fields: [admin_id], references: [id])
+  admin        Admin         @relation(fields: [admin_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   admin_id     String
 
   @@map("testimonial_configs")

@@ -1,6 +1,12 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { ApiKeyService } from 'src/api-key/api-key.service';
+import { ErrorMessagesHelper } from 'src/helpers/error-messages.helper';
 
 @Injectable()
 export class ApiKeyGuard implements CanActivate {
@@ -10,7 +16,11 @@ export class ApiKeyGuard implements CanActivate {
     const request: Request = context.switchToHttp().getRequest();
     const queryParams = request.query;
 
-    const apikey = queryParams.apikey as string;
+    const apikey = queryParams.api_key as string;
+
+    if (!apikey) {
+      throw new ForbiddenException(ErrorMessagesHelper.API_KEY_REQUIRED);
+    }
 
     const apiKeyExists = await this.apiKeyService.findByKey(apikey);
 
@@ -18,6 +28,6 @@ export class ApiKeyGuard implements CanActivate {
       return true;
     }
 
-    return false;
+    throw new ForbiddenException(ErrorMessagesHelper.INVALID_API_KEY);
   }
 }

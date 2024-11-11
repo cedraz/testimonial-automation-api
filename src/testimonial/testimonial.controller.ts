@@ -15,6 +15,8 @@ import { Testimonial } from './entities/testimonial.entity';
 import { TestimonialPaginationDto } from './dto/testimonial.pagination.dto';
 import { AdminGuard } from 'src/auth/guards/admin.guard';
 import { ApiKeyGuard } from 'src/auth/guards/api-key.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { CompleteTestimonialDto } from './dto/complete-testimonial.dto';
 
 @ApiTags('testimonial')
 @Controller('testimonial')
@@ -26,9 +28,15 @@ export class TestimonialController {
     type: Testimonial,
   })
   @ApiBearerAuth()
-  @UseGuards(AdminGuard)
-  createTestimonialLink(@Body() createTestimonialDto: CreateTestimonialDto) {
-    return this.testimonialService.createTestimonialLink(createTestimonialDto);
+  @UseGuards(JwtAuthGuard)
+  createTestimonialLink(
+    @Body() createTestimonialDto: CreateTestimonialDto,
+    @Request() req,
+  ) {
+    return this.testimonialService.createTestimonialLink(
+      req.user.id,
+      createTestimonialDto,
+    );
   }
 
   @Post('complete/:testimonial_id')
@@ -36,7 +44,7 @@ export class TestimonialController {
     type: Testimonial,
   })
   completeTestimonial(
-    @Body() completeTestimonialDto: any,
+    @Body() completeTestimonialDto: CompleteTestimonialDto,
     @Param('testimonial_id') testimonial_id: string,
   ) {
     return this.testimonialService.completeTestimonial(
@@ -73,6 +81,8 @@ export class TestimonialController {
   })
   @UseGuards(ApiKeyGuard)
   findByLandingPageId(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    @Query('api_key') api_key: string,
     @Param('landing_page_id') landing_page_id: string,
     @Query() pagination: TestimonialPaginationDto,
   ) {

@@ -27,8 +27,10 @@ export class LandingPagePaginationDto extends PaginationQueryDto {
       });
     }
 
+    const filteredAND = AND.filter((condition) => condition !== undefined);
+
     return {
-      AND,
+      AND: filteredAND,
     };
   }
 }

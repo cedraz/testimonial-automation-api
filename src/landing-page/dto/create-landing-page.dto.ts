@@ -8,8 +8,5 @@ export class CreateLandingPageDto {
   link: string;
 
   @IsUUID()
-  admin_id: string;
-
-  @IsUUID()
   testimonial_config_id: string;
 }

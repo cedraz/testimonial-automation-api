@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { changeErrorMessage } from './utils/errorMessageValidator';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -45,11 +46,16 @@ async function bootstrap() {
         return new BadRequestException(result);
       },
       stopAtFirstError: true,
+      transform: true,
     }),
   );
 
+  app.use(cookieParser());
+
   app.enableCors({
-    origin: '*', // Ou especifique domínios específicos em vez de '*'
+    origin: (origin, callback) => {
+      callback(null, true); // Permite qualquer origem
+    },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     preflightContinue: false,
     optionsSuccessStatus: 204,

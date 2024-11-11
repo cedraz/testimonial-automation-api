@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { CreateStripeMobileCheckoutDto } from './dto/create-stripe-mobile-checkout.dto';
 import { CreateStripeCustomerDto } from './dto/create-stripe-customer.dto';
 import { CreateStripeSCheckoutSessionDto } from './dto/create-stripe-checkout-session.dto';
-import dayjs from 'dayjs';
+import * as dayjs from 'dayjs';
 import { HandleStripeWebhookDto } from './dto/handle-stripe-webhook.dto';
 import { AdminService } from 'src/admin/admin.service';
 
@@ -46,7 +46,6 @@ export class StripeService {
     );
 
     if (customer) {
-      console.log('Caiu aqui');
       return {
         ...customer,
         subscription_id: customer.subscriptions.data[0].id,

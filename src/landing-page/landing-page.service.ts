@@ -22,16 +22,14 @@ export class LandingPageService {
     private StripeService: StripeService,
   ) {}
 
-  async create(createLandingPageDto: CreateLandingPageDto) {
-    const adminPlan = await this.StripeService.getAdminsCurrentPlan(
-      createLandingPageDto.admin_id,
-    );
+  async create(createLandingPageDto: CreateLandingPageDto, admin_id: string) {
+    const adminPlan = await this.StripeService.getAdminsCurrentPlan(admin_id);
 
     const landingPageQuota = this.configService.get(
       `${adminPlan.plan}_PLAN_LANDING_PAGES_QUOTA`,
     );
 
-    const landingPageCount = await this.count(createLandingPageDto.admin_id);
+    const landingPageCount = await this.count(admin_id);
 
     if (landingPageCount >= landingPageQuota) {
       throw new ConflictException(
@@ -55,7 +53,7 @@ export class LandingPageService {
         link: createLandingPageDto.link,
         admin: {
           connect: {
-            id: createLandingPageDto.admin_id,
+            id: admin_id,
           },
         },
         testimonial_config: {

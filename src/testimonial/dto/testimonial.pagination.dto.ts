@@ -62,8 +62,10 @@ export class TestimonialPaginationDto extends PaginationQueryDto {
       });
     }
 
+    const filteredAND = AND.filter((condition) => condition !== undefined);
+
     return {
-      AND,
+      AND: filteredAND,
     };
   }
 }

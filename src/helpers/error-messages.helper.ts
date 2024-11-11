@@ -20,4 +20,7 @@ export const ErrorMessagesHelper = {
   TESTIMONIAL_EXPIRED: 'Depoimento expirado.',
   MESSAGE_CHAR_LIMIT_EXCEEDED: 'Limite de caracteres excedido.',
   TITLE_CHAR_LIMIT_EXCEEDED: 'Limite de caracteres no título excedido.',
+  API_KEY_NOT_FOUND: 'Chave de API não encontrada.',
+  API_KEY_REQUIRED: 'Chave de API é obrigatória.',
+  INVALID_API_KEY: 'Chave de API inválida.',
 };

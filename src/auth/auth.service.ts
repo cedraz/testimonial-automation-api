@@ -119,15 +119,22 @@ export class AuthService {
       throw new UnauthorizedException(ErrorMessagesHelper.INVALID_CREDENTIALS);
     }
 
+    const accessTokenExpiresIn = new Date(
+      new Date().getTime() + 2 * 60 * 60 * 1000,
+    );
+    const refreshTokenExpiresIn = new Date(
+      new Date().getTime() + 7 * 24 * 60 * 60 * 1000,
+    );
+
     const accessTokenPayload = {
       sub: admin.id,
       email: admin.email,
-      expiresIn: new Date(new Date().getTime() + 2 * 60 * 60 * 1000), // 2 hours
+      expiresIn: accessTokenExpiresIn, // 2 hours
     };
 
     const refreshTokenPayload = {
       sub: admin.id,
-      expiresIn: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000), // 7 days
+      expiresIn: refreshTokenExpiresIn, // 7 days
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -142,6 +149,8 @@ export class AuthService {
         expiresIn: '7d',
         secret: this.configService.get('REFRESH_TOKEN_SECRET'),
       }),
+      access_token_expires_in: accessTokenExpiresIn, // 2 hours
+      refresh_token_expires_in: refreshTokenExpiresIn, // 7 days
     };
   }
 

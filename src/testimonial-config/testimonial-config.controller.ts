@@ -28,8 +28,14 @@ export class TestimonialConfigController {
   })
   @ApiBearerAuth()
   @UseGuards(AdminGuard)
-  create(@Body() createTestimonialConfigDto: CreateTestimonialConfigDto) {
-    return this.testimonialConfigService.create(createTestimonialConfigDto);
+  create(
+    @Body() createTestimonialConfigDto: CreateTestimonialConfigDto,
+    @Request() req,
+  ) {
+    return this.testimonialConfigService.create(
+      createTestimonialConfigDto,
+      req.user.id,
+    );
   }
 
   @Get(':testimonial_config_id')

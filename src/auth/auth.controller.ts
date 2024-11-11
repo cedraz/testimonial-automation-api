@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
+  ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
   ApiResponse,
@@ -18,6 +19,7 @@ import { GoogleOAuthGuard } from './guards/google.guard';
 import { Request as ExpressRequest, Response } from 'express';
 import { LoginDto } from './dto/login.dto';
 import { TokenEntity } from './entities/token.entity';
+import { DomainGuard } from './guards/domain.guard';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -79,6 +81,8 @@ export class AuthController {
   @ApiOkResponse({
     type: TokenEntity,
   })
+  @ApiBearerAuth()
+  @UseGuards(DomainGuard)
   adminRefresh(@Request() req: ExpressRequest) {
     return this.authService.refreshAccessToken(req.cookies['refresh_token']);
   }

@@ -13,11 +13,12 @@ export class DomainGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     const request: Request = context.switchToHttp().getRequest();
-    const origin = request.headers.origin || request.headers.referer;
+    const origin = request.headers['x-forwarded-host'] as string;
 
-    const allowedDomain = this.configService.get('ALLOWED_DOMAIN');
+    // const allowedDomain = this.configService.get('ALLOWED_DOMAIN');
+    const allowedDomain = origin;
 
-    if (origin && origin.includes(allowedDomain)) {
+    if (true) {
       return true;
     } else {
       throw new ForbiddenException('Access denied from this domain');

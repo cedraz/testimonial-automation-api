@@ -26,10 +26,11 @@ export class TestimonialService {
     private googleGeminiService: GoogleGeminiService,
   ) {}
 
-  async createTestimonialLink(createTestimonialDto: CreateTestimonialDto) {
-    const adminPlan = await this.stripeService.getAdminsCurrentPlan(
-      createTestimonialDto.admin_id,
-    );
+  async createTestimonialLink(
+    admin_id: string,
+    createTestimonialDto: CreateTestimonialDto,
+  ) {
+    const adminPlan = await this.stripeService.getAdminsCurrentPlan(admin_id);
 
     const testimonialQuota = this.configService.get(
       `${adminPlan.plan}_PLAN_TESTIMONIAL_QUOTA`,
@@ -76,7 +77,8 @@ export class TestimonialService {
       );
 
     const testimonialConfigExpirationLimit = new Date(
-      testimonial_config.expiration_limit * 24 * 60 * 60 * 1000,
+      new Date(testimonial.created_at).getTime() +
+        testimonial_config.expiration_limit * 24 * 60 * 60 * 1000, // convert days to milliseconds
     );
 
     if (testimonialConfigExpirationLimit < new Date())

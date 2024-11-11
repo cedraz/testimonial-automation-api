@@ -14,10 +14,11 @@ export class TestimonialConfigService {
     private configService: ConfigService,
   ) {}
 
-  async create(createTestimonialConfigDto: CreateTestimonialConfigDto) {
-    const testimonialConfigCount = await this.count(
-      createTestimonialConfigDto.admin_id,
-    );
+  async create(
+    createTestimonialConfigDto: CreateTestimonialConfigDto,
+    admin_id: string,
+  ) {
+    const testimonialConfigCount = await this.count(admin_id);
 
     if (
       testimonialConfigCount >=
@@ -29,7 +30,10 @@ export class TestimonialConfigService {
     }
 
     return this.prismaService.testimonialConfig.create({
-      data: createTestimonialConfigDto,
+      data: {
+        ...createTestimonialConfigDto,
+        admin_id,
+      },
     });
   }
 
