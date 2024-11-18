@@ -10,6 +10,7 @@ To run the application, please follow these steps:
   git clone https://github.com/cedraz/micro-saas-base-api
   ```
 
+
 3. Navigate to the project directory:
 
   ```shell
