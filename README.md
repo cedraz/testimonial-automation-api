@@ -12,6 +12,7 @@ To run the application, please follow these steps:
 git clone https://github.com/cedraz/testimonial-automation-api
 ```
 
+
 3. Navigate to the project directory:
 
 ```shell
