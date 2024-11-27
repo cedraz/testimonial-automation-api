@@ -40,7 +40,7 @@ export class LandingPageController {
     return this.landingPageService.findById(landing_page_id);
   }
 
-  @Get('')
+  @Get()
   @ApiOkResponse({
     type: LandingPage,
     isArray: true,

@@ -2,23 +2,24 @@ import { Module } from '@nestjs/common';
 import { TestimonialService } from './testimonial.service';
 import { TestimonialController } from './testimonial.controller';
 import { StripeModule } from 'src/stripe/stripe.module';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { LandingPageService } from 'src/landing-page/landing-page.service';
-import { TestimonialConfigService } from 'src/testimonial-config/testimonial-config.service';
 import { AuthModule } from 'src/auth/auth.module';
-import { ApiKeyService } from 'src/api-key/api-key.service';
-import { GoogleGeminiService } from 'src/services/google-gemini/google-gemini.service';
+import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
+import { ApiKeyModule } from 'src/api-key/api-key.module';
+import { LandingPageModule } from 'src/landing-page/landing-page.module';
+import { TestimonialConfigModule } from 'src/testimonial-config/testimonial-config.module';
+import { GoogleGeminiModule } from 'src/services/google-gemini/google-gemini.module';
 
 @Module({
   controllers: [TestimonialController],
-  providers: [
-    TestimonialService,
-    PrismaService,
-    LandingPageService,
-    TestimonialConfigService,
-    GoogleGeminiService,
-    ApiKeyService,
+  providers: [TestimonialService],
+  imports: [
+    StripeModule,
+    AuthModule,
+    CloudinaryModule,
+    ApiKeyModule,
+    LandingPageModule,
+    TestimonialConfigModule,
+    GoogleGeminiModule,
   ],
-  imports: [StripeModule, AuthModule],
 })
 export class TestimonialModule {}

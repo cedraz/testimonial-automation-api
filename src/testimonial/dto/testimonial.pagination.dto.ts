@@ -1,7 +1,15 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Prisma, TestimonialStatus } from '@prisma/client';
-import { Type } from 'class-transformer';
-import { IsBoolean, IsEnum, IsInt, IsOptional, IsUUID } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import {
+  IsBoolean,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsUUID,
+  Max,
+  Min,
+} from 'class-validator';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 
 export class TestimonialPaginationDto extends PaginationQueryDto {
@@ -25,7 +33,10 @@ export class TestimonialPaginationDto extends PaginationQueryDto {
 
   @ApiPropertyOptional()
   @IsOptional()
+  @Transform(({ value }) => parseInt(value, 10))
   @IsInt()
+  @Max(5)
+  @Min(1)
   stars?: number;
 
   @ApiPropertyOptional()

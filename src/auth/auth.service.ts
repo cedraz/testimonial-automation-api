@@ -165,15 +165,23 @@ export class AuthService {
       throw new NotFoundException(ErrorMessagesHelper.ADMIN_NOT_FOUND);
     }
 
+    const access_token_expires_in = new Date(
+      new Date().getTime() + 2 * 60 * 60 * 1000,
+    ); // 2 Hours
+
+    const refresh_token_expires_in = new Date(
+      new Date().getTime() + 7 * 24 * 60 * 60 * 1000,
+    ); // 7 Days
+
     const accessTokenPayload = {
       sub: admin.id,
       email: admin.email,
-      expiresIn: new Date(new Date().getTime() + 2 * 60 * 60 * 1000), // 2 hours
+      expiresIn: access_token_expires_in,
     };
 
     const refreshTokenPayload = {
       sub: admin.id,
-      expiresIn: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000), // 7 days
+      expiresIn: refresh_token_expires_in,
     };
 
     return {
@@ -181,10 +189,12 @@ export class AuthService {
         expiresIn: '2h',
         secret: this.configService.get('ACCESS_TOKEN_SECRET'),
       }),
-      refreshToken: await this.jwtService.signAsync(refreshTokenPayload, {
+      refresh_token: await this.jwtService.signAsync(refreshTokenPayload, {
         expiresIn: '7d',
         secret: this.configService.get('REFRESH_TOKEN_SECRET'),
       }),
+      access_token_expires_in,
+      refresh_token_expires_in,
     };
   }
 }

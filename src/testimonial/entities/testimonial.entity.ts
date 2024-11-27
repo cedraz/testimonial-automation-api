@@ -13,4 +13,5 @@ export class Testimonial implements PrismaTestimonial {
   created_at: Date;
   updated_at: Date;
   landing_page_id: string;
+  image: string;
 }

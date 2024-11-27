@@ -15,6 +15,7 @@ import { TestimonialPaginationDto } from './dto/testimonial.pagination.dto';
 import { PaginationResultDto } from 'src/common/entities/pagination-result.entity';
 import { Testimonial } from './entities/testimonial.entity';
 import { GoogleGeminiService } from 'src/services/google-gemini/google-gemini.service';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class TestimonialService {
@@ -24,6 +25,7 @@ export class TestimonialService {
     private prismaService: PrismaService,
     private landingPageService: LandingPageService,
     private googleGeminiService: GoogleGeminiService,
+    private cloudinaryService: CloudinaryService,
   ) {}
 
   async createTestimonialLink(
@@ -61,6 +63,7 @@ export class TestimonialService {
   async completeTestimonial(
     testimonial_id: string,
     completeTestimonialDto: CompleteTestimonialDto,
+    file?: Express.Multer.File,
   ) {
     const testimonial = await this.findById(testimonial_id);
 
@@ -124,6 +127,19 @@ export class TestimonialService {
       status = isPositiveFeedback ? 'APPROVED' : 'REJECTED';
     }
 
+    let image: string;
+
+    if (file) {
+      try {
+        const cloudinaryResponse =
+          await this.cloudinaryService.uploadImage(file);
+
+        image = cloudinaryResponse.secure_url;
+      } catch (error) {
+        image = '';
+      }
+    }
+
     return this.prismaService.testimonial.update({
       where: {
         id: testimonial_id,
@@ -134,6 +150,7 @@ export class TestimonialService {
         message: completeTestimonialDto.message,
         stars: completeTestimonialDto.stars,
         title: completeTestimonialDto.title,
+        image,
       },
     });
   }

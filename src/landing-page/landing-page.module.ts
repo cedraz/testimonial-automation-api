@@ -1,21 +1,14 @@
 import { Module } from '@nestjs/common';
 import { LandingPageService } from './landing-page.service';
 import { LandingPageController } from './landing-page.controller';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { StripeService } from 'src/stripe/stripe.service';
-import { TestimonialConfigService } from 'src/testimonial-config/testimonial-config.service';
 import { StripeModule } from 'src/stripe/stripe.module';
-import { AdminModule } from 'src/admin/admin.module';
+import { TestimonialConfigModule } from 'src/testimonial-config/testimonial-config.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   controllers: [LandingPageController],
-  providers: [
-    LandingPageService,
-    PrismaService,
-    StripeService,
-    TestimonialConfigService,
-  ],
+  providers: [LandingPageService],
   exports: [LandingPageService],
-  imports: [StripeModule, AdminModule],
+  imports: [StripeModule, StripeModule, TestimonialConfigModule, AuthModule],
 })
 export class LandingPageModule {}

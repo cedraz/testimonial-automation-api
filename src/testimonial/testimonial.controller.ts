@@ -6,7 +6,9 @@ import {
   Post,
   Query,
   Request,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { TestimonialService } from './testimonial.service';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
@@ -17,6 +19,7 @@ import { AdminGuard } from 'src/auth/guards/admin.guard';
 import { ApiKeyGuard } from 'src/auth/guards/api-key.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CompleteTestimonialDto } from './dto/complete-testimonial.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('testimonial')
 @Controller('testimonial')
@@ -40,16 +43,19 @@ export class TestimonialController {
   }
 
   @Post('complete/:testimonial_id')
+  @UseInterceptors(FileInterceptor('image'))
   @ApiOkResponse({
     type: Testimonial,
   })
   completeTestimonial(
     @Body() completeTestimonialDto: CompleteTestimonialDto,
     @Param('testimonial_id') testimonial_id: string,
+    @UploadedFile() file?: Express.Multer.File,
   ) {
     return this.testimonialService.completeTestimonial(
       testimonial_id,
       completeTestimonialDto,
+      file,
     );
   }
 

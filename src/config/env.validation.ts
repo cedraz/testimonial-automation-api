@@ -90,6 +90,9 @@ class EnvironmentVariables {
 
   @IsString()
   GOOGLE_API_KEY: string;
+
+  @IsString()
+  CLOUDINARY_URL: string;
 }
 
 export function validate(config: Record<string, unknown>) {

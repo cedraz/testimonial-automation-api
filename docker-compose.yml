@@ -8,13 +8,13 @@ services:
     environment:
       - POSTGRES_USER=johndoe
       - POSTGRES_PASSWORD=randompassword  # Certifique-se de que esta senha está correta
-      - POSTGRES_DB=testimonial-automation
+      - POSTGRES_DB=testimonialautomationdb
 
   redis:
     image: redis:7-alpine
     container_name: redis-testimonial-automation
     ports:
-      - 6380:6379
+      - 6379:6379
     environment:
       - NODE_ENV=dev
     deploy:

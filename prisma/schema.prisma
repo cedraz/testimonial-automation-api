@@ -134,6 +134,7 @@ model Testimonial {
   title         String?
   message       String?
   stars         Int?
+  image         String?
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt

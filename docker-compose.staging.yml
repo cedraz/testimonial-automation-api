@@ -1,0 +1,56 @@
+services:
+  db:
+    image: postgres:alpine
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: johndoe
+      POSTGRES_PASSWORD: randompassword
+      POSTGRES_DB: testimonialautomationdb
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis-testimonial-automation
+    ports:
+      - 6379:6379
+    environment:
+      - NODE_ENV=dev
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: 10M
+    
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.staging
+    command: sh -c "npx prisma migrate dev && npm run start:dev"
+    ports:
+      - "3333:3333"
+    env_file:
+      - .env.staging
+    volumes:
+      - .:/app # Sincroniza os arquivos locais com os do contêiner
+      - /app/node_modules
+    depends_on:
+      - db
+      - redis
+    
+  prisma-studio:
+    build:
+      context: .
+      dockerfile: Dockerfile.staging
+    command: sh -c "npx prisma studio"
+    ports:
+      - "5555:5555"
+    env_file:
+      - .env.staging
+    depends_on:
+      - db
+      - redis

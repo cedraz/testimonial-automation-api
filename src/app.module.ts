@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { validate } from './config/env.validation';
 import { AuthModule } from './auth/auth.module';
 import { VerificationRequestModule } from './verification-request/verification-request.module';
-import { PrismaService } from './prisma/prisma.service';
 import { JwtModule } from '@nestjs/jwt';
 import { BullModule } from '@nestjs/bullmq';
 import { AdminModule } from './admin/admin.module';
@@ -16,21 +15,28 @@ import { TestimonialConfigModule } from './testimonial-config/testimonial-config
 import { TestimonialModule } from './testimonial/testimonial.module';
 import { DomainGuard } from './auth/guards/domain.guard';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { PrismaModule } from './prisma/prisma.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       validate: validate,
+      envFilePath: ['.env', '.env.staging'],
     }),
     JwtModule.register({
       global: true,
     }),
-    BullModule.forRoot({
-      connection: {
-        host: 'localhost', // name of the service in the docker compose file
-        port: 6380,
-      },
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        connection: {
+          host: configService.get('REDIS_HOST'),
+          port: configService.get('REDIS_PORT'),
+        },
+      }),
+      inject: [ConfigService],
     }),
     ScheduleModule.forRoot(),
     VerificationRequestModule,
@@ -41,9 +47,11 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
     LandingPageModule,
     TestimonialConfigModule,
     TestimonialModule,
+    PrismaModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
-  providers: [PrismaService, DomainGuard, JwtAuthGuard],
+  providers: [DomainGuard, JwtAuthGuard],
   exports: [DomainGuard, JwtAuthGuard],
 })
 export class AppModule {}
