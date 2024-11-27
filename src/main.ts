@@ -27,6 +27,7 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       exceptionFactory: (errors) => {
+        // console.log(errors);
         const result = errors.map((error) => {
           let errorMessage: string | null = changeErrorMessage({
             contraintKey: Object.keys(error.constraints)[0],

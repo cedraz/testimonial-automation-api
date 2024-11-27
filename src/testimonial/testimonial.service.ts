@@ -16,6 +16,7 @@ import { PaginationResultDto } from 'src/common/entities/pagination-result.entit
 import { Testimonial } from './entities/testimonial.entity';
 import { GoogleGeminiService } from 'src/services/google-gemini/google-gemini.service';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { UpdateTestimonialDto } from './dto/update-testimonial.dto';
 
 @Injectable()
 export class TestimonialService {
@@ -234,5 +235,46 @@ export class TestimonialService {
       limit: pagination.limit,
       init: pagination.init,
     };
+  }
+
+  async delete(testimonial_id: string) {
+    return this.prismaService.testimonial.delete({
+      where: {
+        id: testimonial_id,
+      },
+    });
+  }
+
+  async update({
+    testimonial_id,
+    updateTestimonialDto,
+    file,
+  }: {
+    testimonial_id: string;
+    updateTestimonialDto: UpdateTestimonialDto;
+    file?: Express.Multer.File;
+  }) {
+    let image: string;
+
+    if (file) {
+      try {
+        const cloudinaryResponse =
+          await this.cloudinaryService.uploadImage(file);
+
+        image = cloudinaryResponse.secure_url;
+      } catch (error) {
+        image = '';
+      }
+    }
+
+    return this.prismaService.testimonial.update({
+      where: {
+        id: testimonial_id,
+      },
+      data: {
+        ...updateTestimonialDto,
+        image,
+      },
+    });
   }
 }

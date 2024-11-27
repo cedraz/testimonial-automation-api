@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
+  Put,
   Query,
   Request,
   UploadedFile,
@@ -11,7 +13,12 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { TestimonialService } from './testimonial.service';
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreateTestimonialDto } from './dto/create-testimonial.dto';
 import { Testimonial } from './entities/testimonial.entity';
 import { TestimonialPaginationDto } from './dto/testimonial.pagination.dto';
@@ -20,6 +27,7 @@ import { ApiKeyGuard } from 'src/auth/guards/api-key.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CompleteTestimonialDto } from './dto/complete-testimonial.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UpdateTestimonialDto } from './dto/update-testimonial.dto';
 
 @ApiTags('testimonial')
 @Controller('testimonial')
@@ -27,6 +35,7 @@ export class TestimonialController {
   constructor(private readonly testimonialService: TestimonialService) {}
 
   @Post()
+  @ApiOperation({ summary: 'Create a new testimonial link' })
   @ApiOkResponse({
     type: Testimonial,
   })
@@ -44,6 +53,7 @@ export class TestimonialController {
 
   @Post('complete/:testimonial_id')
   @UseInterceptors(FileInterceptor('image'))
+  @ApiOperation({ summary: 'Complete a testimonial' })
   @ApiOkResponse({
     type: Testimonial,
   })
@@ -59,7 +69,28 @@ export class TestimonialController {
     );
   }
 
+  @Put(':testimonial_id')
+  @UseInterceptors(FileInterceptor('image'))
+  @ApiOperation({ summary: 'Update a testimonial' })
+  @ApiOkResponse({
+    type: Testimonial,
+  })
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
+  update(
+    @Body() updateTestimonialDto: UpdateTestimonialDto,
+    @Param('testimonial_id') testimonial_id: string,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    return this.testimonialService.update({
+      updateTestimonialDto,
+      testimonial_id,
+      file,
+    });
+  }
+
   @Get(':testimonial_id')
+  @ApiOperation({ summary: 'Find a testimonial by id' })
   @ApiOkResponse({
     type: Testimonial,
   })
@@ -70,6 +101,7 @@ export class TestimonialController {
   }
 
   @Get()
+  @ApiOperation({ summary: 'Find all testimonials' })
   @ApiOkResponse({
     type: Testimonial,
     isArray: true,
@@ -81,6 +113,7 @@ export class TestimonialController {
   }
 
   @Get('landing-page/:landing_page_id')
+  @ApiOperation({ summary: 'Find testimonials by landing page id' })
   @ApiOkResponse({
     type: Testimonial,
     isArray: true,
@@ -96,5 +129,16 @@ export class TestimonialController {
       landing_page_id,
       pagination,
     );
+  }
+
+  @Delete(':testimonial_id')
+  @ApiOperation({ summary: 'Delete a testimonial' })
+  @ApiOkResponse({
+    type: Testimonial,
+  })
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
+  delete(@Param('testimonial_id') testimonial_id: string) {
+    return this.testimonialService.delete(testimonial_id);
   }
 }
