@@ -1,7 +1,13 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Prisma, TestimonialFormat } from '@prisma/client';
 import { Type } from 'class-transformer';
-import { IsBoolean, IsEnum, IsInt, IsOptional } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 
 export class TestimonialConfigPaginationDto extends PaginationQueryDto {
@@ -10,6 +16,11 @@ export class TestimonialConfigPaginationDto extends PaginationQueryDto {
   @IsOptional()
   @Type(() => Boolean)
   orderByCreatedAt: boolean;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  name?: string;
 
   @ApiPropertyOptional({
     enum: TestimonialFormat,

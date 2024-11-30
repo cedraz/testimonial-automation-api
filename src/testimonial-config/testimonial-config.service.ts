@@ -6,6 +6,7 @@ import { ErrorMessagesHelper } from 'src/helpers/error-messages.helper';
 import { TestimonialConfigPaginationDto } from './dto/testimonial-config-pagination.dto';
 import { PaginationResultDto } from 'src/common/entities/pagination-result.entity';
 import { TestimonialConfig } from './entities/testimonial-config.entity';
+import { UpdateTestimonialConfigDto } from './dto/update-testimonial-config.dto';
 
 @Injectable()
 export class TestimonialConfigService {
@@ -75,6 +76,26 @@ export class TestimonialConfigService {
     return this.prismaService.testimonialConfig.count({
       where: {
         admin_id,
+      },
+    });
+  }
+
+  update(
+    testimonial_config_id: string,
+    updateTestimonialConfigDto: UpdateTestimonialConfigDto,
+  ) {
+    return this.prismaService.testimonialConfig.update({
+      where: {
+        id: testimonial_config_id,
+      },
+      data: updateTestimonialConfigDto,
+    });
+  }
+
+  delete(testimonial_config_id: string) {
+    return this.prismaService.testimonialConfig.delete({
+      where: {
+        id: testimonial_config_id,
       },
     });
   }

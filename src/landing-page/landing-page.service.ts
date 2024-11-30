@@ -12,6 +12,7 @@ import { StripeService } from 'src/stripe/stripe.service';
 import { PaginationResultDto } from 'src/common/entities/pagination-result.entity';
 import { LandingPage } from './entities/landing-page.entity';
 import { LandingPagePaginationDto } from './dto/landing-page.pagination.dto';
+import { DeleteManyLandingPagesDto } from './dto/delete-many-landing-pages.dto';
 
 @Injectable()
 export class LandingPageService {
@@ -123,5 +124,30 @@ export class LandingPageService {
       limit: pagination.limit,
       init: pagination.init,
     };
+  }
+
+  delete(landing_page_id: string) {
+    return this.prismaService.landingPage.delete({
+      where: {
+        id: landing_page_id,
+      },
+    });
+  }
+
+  deleteMany({
+    deleteManyLandingPagesDto,
+    admin_id,
+  }: {
+    deleteManyLandingPagesDto: DeleteManyLandingPagesDto;
+    admin_id: string;
+  }) {
+    return this.prismaService.landingPage.deleteMany({
+      where: {
+        admin_id,
+        id: {
+          in: deleteManyLandingPagesDto.landing_pages_id_list,
+        },
+      },
+    });
   }
 }

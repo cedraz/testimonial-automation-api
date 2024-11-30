@@ -245,6 +245,16 @@ export class TestimonialService {
     });
   }
 
+  async deleteMany(testimonials_id_list: Array<string>) {
+    return this.prismaService.testimonial.deleteMany({
+      where: {
+        id: {
+          in: testimonials_id_list,
+        },
+      },
+    });
+  }
+
   async update({
     testimonial_id,
     updateTestimonialDto,

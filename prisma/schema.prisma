@@ -105,6 +105,7 @@ enum TestimonialFormat {
 
 model TestimonialConfig {
   id                 String            @id @default(uuid())
+  name               String
   format             TestimonialFormat
   title_char_limit   Int
   message_char_limit Int

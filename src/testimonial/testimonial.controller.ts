@@ -28,6 +28,8 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CompleteTestimonialDto } from './dto/complete-testimonial.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateTestimonialDto } from './dto/update-testimonial.dto';
+import { DeleteManyTestimonialsDto } from './dto/delete-many-testimonials.dto';
+import { PrismaBatchPayload } from 'src/common/entities/prisma-batch-payload.entity';
 
 @ApiTags('testimonial')
 @Controller('testimonial')
@@ -131,14 +133,27 @@ export class TestimonialController {
     );
   }
 
-  @Delete(':testimonial_id')
-  @ApiOperation({ summary: 'Delete a testimonial' })
+  // @Delete(':testimonial_id')
+  // @ApiOperation({ summary: 'Delete a testimonial' })
+  // @ApiOkResponse({
+  //   type: Testimonial,
+  // })
+  // @ApiBearerAuth()
+  // @UseGuards(AdminGuard)
+  // delete(@Param('testimonial_id') testimonial_id: string) {
+  //   return this.testimonialService.delete(testimonial_id);
+  // }
+
+  @Delete()
+  @ApiOperation({ summary: 'Delete may testimonials' })
   @ApiOkResponse({
-    type: Testimonial,
+    type: PrismaBatchPayload,
   })
   @ApiBearerAuth()
   @UseGuards(AdminGuard)
-  delete(@Param('testimonial_id') testimonial_id: string) {
-    return this.testimonialService.delete(testimonial_id);
+  deleteMany(@Body() deleteManyTestimonialsDto: DeleteManyTestimonialsDto) {
+    return this.testimonialService.deleteMany(
+      deleteManyTestimonialsDto.testimonials_id_list,
+    );
   }
 }
