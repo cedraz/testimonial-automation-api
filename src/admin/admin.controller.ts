@@ -9,11 +9,17 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { PasswordRecoveryAuthGuard } from 'src/auth/guards/password-recovery.guard';
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import { AdminGuard } from 'src/auth/guards/admin.guard';
+import { Admin } from './entities/admin.entity';
 
 @Controller('admin')
 @ApiTags('admin')
@@ -63,6 +69,9 @@ export class AdminController {
   }
 
   @Get('profile')
+  @ApiOkResponse({
+    type: Admin,
+  })
   @ApiOperation({
     summary: 'Get logged admin profile',
   })

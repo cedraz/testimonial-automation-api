@@ -17,6 +17,7 @@ import { TestimonialConfig } from './entities/testimonial-config.entity';
 import { TestimonialConfigPaginationDto } from './dto/testimonial-config-pagination.dto';
 import { AdminGuard } from 'src/auth/guards/admin.guard';
 import { UpdateTestimonialConfigDto } from './dto/update-testimonial-config.dto';
+import { DeleteManyTestimonialConfigsDto } from './dto/delete-many-testimonial-configs.dto';
 
 @ApiTags('testimonial-config')
 @Controller('testimonial-config')
@@ -86,5 +87,19 @@ export class TestimonialConfigController {
   @UseGuards(AdminGuard)
   delete(@Param('testimonial_config_id') testimonial_config_id: string) {
     return this.testimonialConfigService.delete(testimonial_config_id);
+  }
+
+  @Delete()
+  @ApiOkResponse({
+    type: TestimonialConfig,
+  })
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
+  deleteMany(
+    @Body() deleteManyTestimonialConfigsDto: DeleteManyTestimonialConfigsDto,
+  ) {
+    return this.testimonialConfigService.deleteMany(
+      deleteManyTestimonialConfigsDto.testimonial_configs_id_list,
+    );
   }
 }

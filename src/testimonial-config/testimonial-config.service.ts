@@ -99,4 +99,14 @@ export class TestimonialConfigService {
       },
     });
   }
+
+  deleteMany(testimonial_configs_id_list: Array<string>) {
+    return this.prismaService.testimonialConfig.deleteMany({
+      where: {
+        id: {
+          in: testimonial_configs_id_list,
+        },
+      },
+    });
+  }
 }
