@@ -25,11 +25,24 @@ export class StripeService {
   }
 
   async getCustomerByEmail(email: string) {
-    const customer = await this.stripe.customers.list({
+    const customers = await this.stripe.customers.list({
       email,
     });
 
-    return customer.data[0];
+    const customer = customers.data[0];
+
+    if (!customer) {
+      return null;
+    }
+
+    const subscriptions = await this.stripe.subscriptions.list({
+      customer: customer.id,
+    });
+
+    return {
+      ...customer,
+      subscriptions,
+    };
   }
 
   async createCustomer(

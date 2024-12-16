@@ -158,10 +158,17 @@ export class AdminService {
       take: 6,
       select: {
         id: true,
-        email: true,
         name: true,
+        email: true,
         created_at: true,
         updated_at: true,
+        image: true,
+        email_verified_at: true,
+        company_name: true,
+        stripe_customer_id: true,
+        stripe_subscription_id: true,
+        stripe_price_id: true,
+        stripe_subscription_status: true,
       },
     });
 

@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   Injectable,
   NotFoundException,
   OnModuleDestroy,
@@ -27,6 +28,12 @@ export class PrismaService
             // P2025 é o código de erro para "Record to delete does not exist."
             throw new NotFoundException(
               `Record not found in table ${params.model}`,
+            );
+          }
+          if (error.code === 'P2002') {
+            // P2002 é o código de erro para "Unique constraint failed on the {constraint}"
+            throw new ConflictException(
+              `Unique constraint on the ${params.model}`,
             );
           }
         }

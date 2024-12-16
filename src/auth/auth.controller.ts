@@ -51,16 +51,16 @@ export class AuthController {
       user: { access_token: string; refresh_token: string };
     },
     @Res({ passthrough: true }) res: Response,
-  ): { access_token: string } {
+  ) {
     const { access_token, refresh_token } = req.user;
 
-    res.cookie('refresh_token', refresh_token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'none',
-    });
+    const queryParams = new URLSearchParams();
 
-    return { access_token };
+    queryParams.append('access_token', access_token);
+    queryParams.append('refresh_token', refresh_token);
+
+    const redirectUrl = `http://localhost:3000/dashboard?${queryParams}`;
+    return res.redirect(redirectUrl);
   }
 
   @ApiOperation({

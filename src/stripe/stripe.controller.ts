@@ -1,14 +1,15 @@
 import {
   Body,
   Controller,
+  Get,
   Headers,
+  Param,
   Post,
   RawBodyRequest,
   Req,
 } from '@nestjs/common';
 import { StripeService } from './stripe.service';
 import { ApiTags } from '@nestjs/swagger';
-import { CreateStripeMobileCheckoutDto } from './dto/create-stripe-mobile-checkout.dto';
 import { CreateStripeSCheckoutSessionDto } from './dto/create-stripe-checkout-session.dto';
 import { Request } from 'express';
 
@@ -17,12 +18,12 @@ import { Request } from 'express';
 export class StripeController {
   constructor(private readonly stripeService: StripeService) {}
 
-  @Post()
-  createStripeMobileCheckout(
-    @Body() createStripeMobileCheckout: CreateStripeMobileCheckoutDto,
-  ) {
-    return this.stripeService.createMobileCheckout(createStripeMobileCheckout);
-  }
+  // @Post()
+  // createStripeMobileCheckout(
+  //   @Body() createStripeMobileCheckout: CreateStripeMobileCheckoutDto,
+  // ) {
+  //   return this.stripeService.createMobileCheckout(createStripeMobileCheckout);
+  // }
 
   @Post('checkout-session')
   createCheckoutSession(
@@ -31,6 +32,11 @@ export class StripeController {
     return this.stripeService.createCheckoutSession(
       createStripeSCheckoutSessionDto,
     );
+  }
+
+  @Get('/plan/:admin_id')
+  getAdminsCurrentPlan(@Param('admin_id') admin_id: string) {
+    return this.stripeService.getAdminsCurrentPlan(admin_id);
   }
 
   @Post('webhook')

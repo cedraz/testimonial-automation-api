@@ -38,6 +38,16 @@ export class AuthService {
   async validateAdminOutsideProvider(createAuthDto: CreateAuthDto) {
     const admin = await this.adminService.findByEmail(createAuthDto.email);
 
+    let accessTokenPayload = {
+      sub: admin.id,
+      expiresIn: new Date(new Date().getTime() + 2 * 60 * 60 * 1000),
+    };
+
+    let refreshTokenPayload = {
+      sub: admin.id,
+      expiresIn: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
+    };
+
     if (!admin) {
       const newadmin = await this.adminService.create({
         email: createAuthDto.email,
@@ -45,7 +55,7 @@ export class AuthService {
         password: '',
       });
 
-      const provider = await this.prismaService.provider.create({
+      await this.prismaService.provider.create({
         data: {
           provider_id: createAuthDto.provider_id,
           provider_account_id: createAuthDto.provider_account_id,
@@ -53,9 +63,25 @@ export class AuthService {
         },
       });
 
+      accessTokenPayload = {
+        sub: newadmin.id,
+        expiresIn: new Date(new Date().getTime() + 2 * 60 * 60 * 1000),
+      };
+
+      refreshTokenPayload = {
+        sub: newadmin.id,
+        expiresIn: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
+      };
+
       return {
-        admin: newadmin,
-        provider,
+        access_token: await this.jwtService.signAsync(accessTokenPayload, {
+          expiresIn: '2h',
+          secret: this.configService.get('ACCESS_TOKEN_SECRET'),
+        }),
+        refresh_token: await this.jwtService.signAsync(refreshTokenPayload, {
+          expiresIn: '7d',
+          secret: this.configService.get('REFRESH_TOKEN_SECRET'),
+        }),
       };
     }
 
@@ -64,30 +90,17 @@ export class AuthService {
       createAuthDto.provider_account_id,
     );
 
-    if (providerExists) {
-      return admin;
+    if (!providerExists) {
+      await this.adminService.updateProviders(admin.id, {
+        provider_account_id: createAuthDto.provider_account_id,
+        provider_id: createAuthDto.provider_id,
+        access_token: createAuthDto.access_token,
+        access_token_expires: createAuthDto.access_token_expires,
+        refresh_token: createAuthDto.refresh_token,
+      });
     }
 
-    const updatedadmin = await this.adminService.updateProviders(admin.id, {
-      provider_account_id: createAuthDto.provider_account_id,
-      provider_id: createAuthDto.provider_id,
-      access_token: createAuthDto.access_token,
-      access_token_expires: createAuthDto.access_token_expires,
-      refresh_token: createAuthDto.refresh_token,
-    });
-
-    const accessTokenPayload = {
-      sub: admin.id,
-      expiresIn: new Date(new Date().getTime() + 2 * 60 * 60 * 1000),
-    };
-
-    const refreshTokenPayload = {
-      sub: admin.id,
-      expiresIn: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
-    };
-
     return {
-      updatedadmin,
       access_token: await this.jwtService.signAsync(accessTokenPayload, {
         expiresIn: '2h',
         secret: this.configService.get('ACCESS_TOKEN_SECRET'),

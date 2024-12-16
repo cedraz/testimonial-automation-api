@@ -15,4 +15,25 @@ export class Admin {
 
   @IsDate()
   updated_at: Date;
+
+  @IsString()
+  image: string;
+
+  @IsDate()
+  email_verified_at: Date;
+
+  @IsString()
+  company_name: string;
+
+  @IsString()
+  stripe_customer_id: string;
+
+  @IsString()
+  stripe_subscription_id: string;
+
+  @IsString()
+  stripe_price_id: string;
+
+  @IsString()
+  stripe_subscription_status: string;
 }
