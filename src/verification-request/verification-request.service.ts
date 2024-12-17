@@ -54,10 +54,12 @@ export class VerificationRequestService {
         },
       });
 
-    if (!this.isVerificationRequestExpired(verificationRequest.expires)) {
-      throw new ConflictException(
-        'Verification request already exists and is not expired',
-      );
+    if (verificationRequest) {
+      if (!this.isVerificationRequestExpired(verificationRequest.expires)) {
+        throw new ConflictException(
+          'Verification request already exists and is not expired',
+        );
+      }
     }
 
     const newVerificationRequest =

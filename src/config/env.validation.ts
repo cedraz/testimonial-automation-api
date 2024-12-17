@@ -33,6 +33,9 @@ class EnvironmentVariables {
   @IsString()
   REFRESH_TOKEN_SECRET: string;
 
+  @IsString()
+  FRONTEND_URL: string;
+
   // Google OAuth credentials
   @IsString()
   GOOGLE_CLIENT_ID: string;

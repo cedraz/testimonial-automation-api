@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import * as bcrypt from 'bcrypt';
@@ -55,6 +59,12 @@ export class AdminService {
   }
 
   async create(createAdminDto: CreateAdminDto) {
+    const adminExists = await this.findByEmail(createAdminDto.email);
+
+    if (adminExists) {
+      throw new ConflictException('Admin with same email already exists.');
+    }
+
     const salt = await bcrypt.genSalt(10);
     const password_hash = await bcrypt.hash(createAdminDto.password, salt);
 

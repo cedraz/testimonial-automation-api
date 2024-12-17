@@ -4,14 +4,17 @@ import {
   Get,
   Headers,
   Param,
+  Patch,
   Post,
   RawBodyRequest,
   Req,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { StripeService } from './stripe.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateStripeSCheckoutSessionDto } from './dto/create-stripe-checkout-session.dto';
-import { Request } from 'express';
+import { AdminGuard } from 'src/auth/guards/admin.guard';
 
 @ApiTags('stripe')
 @Controller('stripe')
@@ -48,5 +51,12 @@ export class StripeController {
       signature,
       rawBody: request.rawBody,
     });
+  }
+
+  @Patch('/cancel-subscription')
+  @UseGuards(AdminGuard)
+  @ApiBearerAuth()
+  cancelAndSwitchToFreePlan(@Request() req) {
+    return this.stripeService.cancelAndSwitchToFreePlan(req.user.id);
   }
 }
