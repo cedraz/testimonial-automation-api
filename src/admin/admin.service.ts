@@ -17,6 +17,7 @@ import { IngestEventQueueService } from 'src/jobs/queues/ingest-event-queue.serv
 import { VerificationRequestService } from 'src/verification-request/verification-request.service';
 import { CreateProviderDto } from 'src/auth/dto/create-provider.dto';
 import { FindAdminByStripeInfoDto } from './dto/find-admin-by-stripe-info.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AdminService {
@@ -24,6 +25,7 @@ export class AdminService {
     private prismaService: PrismaService,
     private verificationRequestService: VerificationRequestService,
     private ingestEventQueueService: IngestEventQueueService,
+    private configService: ConfigService,
   ) {}
 
   findByEmail(email: string) {
@@ -238,5 +240,71 @@ export class AdminService {
         id: true,
       },
     });
+  }
+
+  async getAdminQuota(admin_id: string) {
+    const admin = await this.findById(admin_id);
+
+    if (!admin) {
+      throw new NotFoundException('Admin not found.');
+    }
+
+    const landingPagesIds = admin.landing_page.map((landing_page) => {
+      return landing_page.id;
+    });
+
+    const totalTestimonials = landingPagesIds.reduce(
+      async (acumulator, landing_page_id) => {
+        const countTestimonials = await this.prismaService.testimonial.count({
+          where: {
+            landing_page_id,
+          },
+        });
+
+        return (await acumulator) + countTestimonials;
+      },
+      Promise.resolve(0),
+    );
+
+    const totalTestimonialConfigs =
+      await this.prismaService.testimonialConfig.count({
+        where: {
+          admin_id: admin.id,
+        },
+      });
+
+    const freePriceId = this.configService.get('STRIPE_FREE_PRICE_ID');
+
+    if (admin.stripe_price_id === freePriceId) {
+      return {
+        totalLandingPages: landingPagesIds.length,
+        totalTestimonialConfigs,
+        totalTestimonials,
+        landingPagesQuota: this.configService.get(
+          'FREE_PLAN_LANDING_PAGES_QUOTA',
+        ),
+        testimonialsQuota: this.configService.get(
+          'FREE_PLAN_TESTIMONIALS_QUOTA',
+        ),
+        testimonialConfigsQuota: this.configService.get(
+          'TESTIMONIAL_CONFIGS_QUOTA',
+        ),
+      };
+    }
+
+    return {
+      totalLandingPages: landingPagesIds.length,
+      totalTestimonialConfigs,
+      totalTestimonials,
+      landingPagesQuota: this.configService.get(
+        'PREMIUM_PLAN_LANDING_PAGES_QUOTA',
+      ),
+      testimonialsQuota: this.configService.get(
+        'PREMIUM_PLAN_TESTIMONIALS_QUOTA',
+      ),
+      testimonialConfigsQuota: this.configService.get(
+        'TESTIMONIAL_CONFIGS_QUOTA',
+      ),
+    };
   }
 }

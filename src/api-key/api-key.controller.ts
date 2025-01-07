@@ -28,6 +28,7 @@ export class ApiKeyController {
   @ApiBearerAuth()
   @UseGuards(AdminGuard)
   async findByAdminId(@Request() req) {
-    return await this.apiKeyService.findByAdminId(req.user.id);
+    const apikey = await this.apiKeyService.findByAdminId(req.user.id);
+    return { apikey };
   }
 }
