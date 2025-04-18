@@ -6,10 +6,15 @@ import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { changeErrorMessage } from './utils/errorMessageValidator';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as cookieParser from 'cookie-parser';
+import { join } from 'node:path';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     rawBody: true,
+  });
+
+  app.useStaticAssets(join(__dirname, '..', 'public'), {
+    prefix: '/docs', // Adjust the prefix as needed
   });
 
   const config = new DocumentBuilder()
@@ -22,7 +27,21 @@ async function bootstrap() {
     })
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document);
+
+  SwaggerModule.setup('docs', app, document, {
+    customCssUrl:
+      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.6.2/swagger-ui.min.css',
+    customCss: `
+      .swagger-ui .opblock .opblock-summary-path-description-wrapper {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0 10px;
+        padding: 0 10px;
+        width: 100%;
+      }
+    `,
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -67,7 +86,7 @@ async function bootstrap() {
 
   const port = configService.get<string>('PORT');
 
-  await app.listen(port);
+  await app.listen(port || 3000);
   console.log(`
     API runing on http://localhost:${port}
     DOCS runing on http://localhost:${port}/docs

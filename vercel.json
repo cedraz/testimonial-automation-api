@@ -3,7 +3,13 @@
   "builds": [
     {
       "src": "dist/src/main.js",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": [
+          "dist/**",
+          ".env"
+        ]
+      }
     }
   ],
   "routes": [
@@ -15,7 +21,8 @@
         "POST",
         "PUT",
         "DELETE",
-        "PATCH"
+        "PATCH",
+        "OPTIONS"
       ]
     }
   ]
