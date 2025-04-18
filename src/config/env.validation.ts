@@ -96,6 +96,18 @@ class EnvironmentVariables {
 
   @IsString()
   CLOUDINARY_URL: string;
+
+  @IsString()
+  REDIS_USERNAME: string;
+
+  @IsString()
+  REDIS_PASSWORD: string;
+
+  @IsString()
+  REDIS_HOST: string;
+
+  @IsNumber()
+  REDIS_PORT: number;
 }
 
 export function validate(config: Record<string, unknown>) {

@@ -4,17 +4,19 @@ services:
   db:
     image: postgres:alpine
     ports:
-      - 5434:5432
+      - 5440:5432
     environment:
       - POSTGRES_USER=johndoe
-      - POSTGRES_PASSWORD=randompassword  # Certifique-se de que esta senha está correta
+      - POSTGRES_PASSWORD=randompassword # Certifique-se de que esta senha está correta
       - POSTGRES_DB=testimonialautomationdb
+    volumes:
+      - db_data:/var/lib/postgresql/data
 
   redis:
     image: redis:7-alpine
     container_name: redis-testimonial-automation
     ports:
-      - 6379:6379
+      - 6390:6379
     environment:
       - NODE_ENV=dev
     deploy:
@@ -22,3 +24,9 @@ services:
         limits:
           cpus: '0.1'
           memory: 10M
+    volumes:
+      - redis_data:/data
+
+volumes:
+  db_data:
+  redis_data:
